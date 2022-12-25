@@ -1,0 +1,15 @@
+input AMPLIFY {
+  globalAuthRule: AuthRule = { allow: public }
+}
+
+type Post @model {
+  id: ID!
+  title: String!
+  comments: [Comment] @hasMany
+}
+
+type Comment @model {
+  id: ID!
+  post: Post @belongsTo
+  content: String!
+}
