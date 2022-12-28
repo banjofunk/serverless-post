@@ -1,0 +1,15 @@
+{
+  "name": "@brandzooka/layers",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "buildAppsync": "(cd appsync/nodejs && yarn install)",
+    "build": "yarn buildAppsync"
+  },
+  "devDependencies": {
+    "appsync-layer": "file:appsync/nodejs",
+    "serverless": "^2.57.0",
+    "serverless-scriptable-plugin": "^1.2.1"
+  }
+}

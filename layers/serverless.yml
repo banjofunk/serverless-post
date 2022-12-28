@@ -1,0 +1,26 @@
+service: layers
+variablesResolutionMode: 20210326
+projectDir: ../
+package:
+  individually: true
+plugins:
+  - serverless-scriptable-plugin
+custom:
+  scriptHooks:
+    before:package:createDeploymentArtifacts: yarn build
+provider:
+  name: aws
+  runtime: nodejs12.x
+  region: us-east-1
+  stage: ${opt:stage, 'dev'}
+layers:
+  appsync:
+    path: appsync
+    name: appsync-layer-${self:provider.stage}
+    compatibleRuntimes:
+      - nodejs12.x
+      - nodejs14.x
+resources:
+  Outputs:
+    Appsync:
+      Value: !Ref AppsyncLambdaLayer

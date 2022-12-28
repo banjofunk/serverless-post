@@ -1,0 +1,14 @@
+mutation UpdateUser($input: UpdateUserInput!) {
+  updateUser(input: $input) {
+    id
+    cognitoId
+    amazonId
+    googleId
+    createdAt
+    updatedAt
+    firstName
+    lastName
+    profileImageUrl
+    email
+  }
+}

@@ -1,0 +1,107 @@
+service: cognito-triggers
+variablesResolutionMode: 20210326
+projectDir: ../
+package:
+  individually: true
+plugins:
+  - serverless-webpack
+provider:
+  name: aws
+  runtime: nodejs12.x
+  region: us-east-1
+  stage: ${opt:stage, 'dev'}
+  deploymentPrefix: ${self:service}
+  versionFunctions: false
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action: "*"
+      Resource: "*"
+    - Effect: "Allow"
+      Action:
+        - cognito-idp:GetGroup
+        - cognito-idp:CreateGroup
+        - cognito-idp:AdminAddUserToGroup
+      Resource:
+        - arn:aws:cognito-idp:${aws:region}:${aws:accountId}:userpool/*
+    - Effect: "Allow"
+      Action:
+        - dynamodb:Query
+        - dynamodb:PutItem
+      Resource:
+        - arn:aws:dynamodb:${aws:region}:${aws:accountId}:table/*
+    - Effect: Allow
+      Action:
+        - lambda:InvokeFunction
+      Resource: "*"
+  environment:
+    stage: ${self:provider.stage}
+    region: ${self:provider.region}
+    graphqlEndpoint: https://3nfot4lb5ffifmmci754xdoj6y.appsync-api.us-east-1.amazonaws.com/graphql
+    # graphqlEndpoint: ${ssm:/brandzookaweb/${self:provider.stage}/graphqlEndpoint, ''}
+custom:
+  userPoolName: webc61eee58_userpool_c61eee58-dev
+  userPoolArn: arn:aws:cognito-idp:us-east-1:285012317380:userpool/us-east-1_U60pC7lYD
+  webpack:
+    webpackConfig: ./webpack.config.js
+    packager: yarn
+    includeModules:
+      nodeModulesRelativeDir: ../
+      forceExclude:
+        - aws-sdk
+        - apollo-client
+        - apollo-link-http-common
+        - aws-appsync
+        - es6-promise
+        - graphql
+        - graphql-tag
+        - isomorphic-fetch
+        - uuid
+        - ws
+        - '@aws-crypto/client-node'
+functions:
+  postConfirmation:
+    handler: functions/postConfirmation.handler
+    events:
+      - cognitoUserPool:
+          pool: ${self:custom.userPoolName}
+          trigger: PostConfirmation
+          existing: true
+  preTokenGeneration:
+    handler: functions/preTokenGeneration.handler
+    layers:
+      - ${cf:layers-${self:provider.stage}.Appsync}
+    events:
+      - cognitoUserPool:
+          pool: ${self:custom.userPoolName}
+          trigger: PreTokenGeneration
+          existing: true
+  preSignUp:
+    handler: functions/preSignUp.handler
+    events:
+      - cognitoUserPool:
+          pool: ${self:custom.userPoolName}
+          trigger: PreSignUp
+          existing: true
+resources:
+  Resources:
+    CognitoPostConfirmationLambdaPermission:
+      Type: AWS::Lambda::Permission
+      Properties:
+        Action: lambda:InvokeFunction
+        FunctionName: !GetAtt PostConfirmationLambdaFunction.Arn
+        Principal: cognito-idp.amazonaws.com
+        SourceArn: ${self:custom.userPoolArn}
+    CognitoPreTokenGenerationLambdaPermission:
+      Type: AWS::Lambda::Permission
+      Properties:
+        Action: lambda:InvokeFunction
+        FunctionName: !GetAtt PreTokenGenerationLambdaFunction.Arn
+        Principal: cognito-idp.amazonaws.com
+        SourceArn: ${self:custom.userPoolArn}
+    CognitoPreSignUpLambdaPermission:
+      Type: AWS::Lambda::Permission
+      Properties:
+        Action: lambda:InvokeFunction
+        FunctionName: !GetAtt PreSignUpLambdaFunction.Arn
+        Principal: cognito-idp.amazonaws.com
+        SourceArn: ${self:custom.userPoolArn}

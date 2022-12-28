@@ -1,0 +1,46 @@
+{
+  "name": "cognito-triggers",
+  "version": "1.0.0",
+  "description": "",
+  "main": "handler.js",
+  "scripts": {
+    "serverless": "serverless",
+    "sls": "serverless"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@babel/cli": "^7.11.6",
+    "@babel/core": "^7.11.6",
+    "@babel/preset-env": "^7.11.5",
+    "babel-loader": "^8.1.0",
+    "babel-plugin-module-resolver": "^4.0.0",
+    "lodash": "^4.17.20",
+    "serverless": "^2.57.0",
+    "serverless-aws-latest-layer-version": "^0.4.1",
+    "serverless-scriptable-plugin": "^1.2.1",
+    "serverless-webpack": "^5.5.4",
+    "webpack": "^5.1.0",
+    "webpack-node-externals": "^2.5.2"
+  },
+  "dependencies": {
+    "service-helpers": "*",
+    "@aws-crypto/client-node": "^3.1.0",
+    "@babel/cli": "^7.12.1",
+    "@babel/core": "^7.12.3",
+    "@babel/preset-env": "^7.12.1",
+    "apollo-cache-inmemory": "^1.6.6",
+    "apollo-client": "^2.6.10",
+    "apollo-link": "^1.2.14",
+    "apollo-link-http": "^1.5.17",
+    "aws-appsync": "^4.0.1",
+    "base64-js": "^1.5.1",
+    "es6-promise": "^4.2.8",
+    "graphql": "^15.3.0",
+    "graphql-tag": "^2.12.5",
+    "isomorphic-fetch": "^3.0.0",
+    "uuid": "^8.3.2",
+    "ws": "^7.3.1"
+  }
+}

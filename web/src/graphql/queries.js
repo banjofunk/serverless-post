@@ -1,6 +1,76 @@
 /* eslint-disable */
 // this is an auto generated file. This will be overwritten
 
+export const getUser = /* GraphQL */ `
+  query GetUser($id: ID!) {
+    getUser(id: $id) {
+      id
+      cognitoId
+      amazonId
+      googleId
+      createdAt
+      updatedAt
+      firstName
+      lastName
+      profileImageUrl
+      email
+    }
+  }
+`;
+export const listUsers = /* GraphQL */ `
+  query ListUsers(
+    $filter: ModelUserFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
+    listUsers(filter: $filter, limit: $limit, nextToken: $nextToken) {
+      items {
+        id
+        cognitoId
+        amazonId
+        googleId
+        createdAt
+        updatedAt
+        firstName
+        lastName
+        profileImageUrl
+        email
+      }
+      nextToken
+    }
+  }
+`;
+export const listUserByEmail = /* GraphQL */ `
+  query ListUserByEmail(
+    $email: String!
+    $sortDirection: ModelSortDirection
+    $filter: ModelUserFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
+    listUserByEmail(
+      email: $email
+      sortDirection: $sortDirection
+      filter: $filter
+      limit: $limit
+      nextToken: $nextToken
+    ) {
+      items {
+        id
+        cognitoId
+        amazonId
+        googleId
+        createdAt
+        updatedAt
+        firstName
+        lastName
+        profileImageUrl
+        email
+      }
+      nextToken
+    }
+  }
+`;
 export const getPost = /* GraphQL */ `
   query GetPost($id: ID!) {
     getPost(id: $id) {

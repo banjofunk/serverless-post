@@ -1,0 +1,14 @@
+mutation CreateUser($input: CreateUserInput!) {
+  createUser(input: $input) {
+    id
+    cognitoId
+    amazonId
+    googleId
+    createdAt
+    updatedAt
+    firstName
+    lastName
+    profileImageUrl
+    email
+  }
+}
