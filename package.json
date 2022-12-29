@@ -4,6 +4,7 @@
   "workspaces": {
     "packages": [
       "web",
+      "eslint",
       "cognito-triggers",
       "service-helpers",
       "layers"

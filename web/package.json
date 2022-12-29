@@ -9,6 +9,11 @@
     "serve": "vite preview"
   },
   "license": "MIT",
+  "eslintConfig": {
+    "extends": [
+      "../eslint"
+    ]
+  },
   "devDependencies": {
     "typescript": "^4.9.4",
     "vite": "^4.0.3",

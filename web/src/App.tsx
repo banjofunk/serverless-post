@@ -1,6 +1,7 @@
 import type { Component } from 'solid-js';
 import { createSignal, createEffect, onCleanup } from 'solid-js';
-import { Amplify, Auth, Hub } from 'aws-amplify';
+import { Amplify, Auth, Hub, API } from 'aws-amplify';
+import { getUser } from './graphql/queries'
 import { CognitoHostedUIIdentityProvider } from '@aws-amplify/auth';
 import awsExports from './aws-exports';
 
@@ -40,31 +41,45 @@ import logo from './logo.svg';
 import styles from './App.module.css';
 
 const App: Component = () => {
-  const [user, setUser] = createSignal({});
+  const [user, setUser] = createSignal(false);
 
   createEffect(() => {
+    let mounted = true;
+    const parseToken = data => {
+      const { signInUserSession: { idToken: { payload: { userId } = {} } = {} } = {} } = data;
+      API.graphql({ query: getUser, variables: { id: userId }})
+        .then(({ data: { getUser: resp } = {}}) => resp)
+        .then(usr => mounted && setUser(usr))
+    }
+
     const unsubscribe = Hub.listen("auth", ({ payload: { event, data } }) => {
       switch (event) {
         case "signIn":
-          setUser(data);
+          console.log('signIn data', data)
+          parseToken(data)
           break;
         case "signOut":
-          setUser(null);
+          setUser(false);
           break;
         case "customOAuthState":
-          console.log(data);
+          console.log('data', data);
           break;
       }
     });
 
     Auth.currentAuthenticatedUser()
-      .then(currentUser => setUser(currentUser))
+      .then(parseToken)
       .catch(() => console.log("Not signed in"));
 
-    onCleanup(unsubscribe);
+    onCleanup(() => {
+      mounted = false;
+      unsubscribe()
+    });
   });
 
-  createEffect(() => console.log('user', user()));
+  createEffect(() => {
+    console.log('usr', user())
+  });
 
   return (
     <div class={styles.App}>
