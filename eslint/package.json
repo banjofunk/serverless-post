@@ -6,6 +6,7 @@
   "devDependencies": {
     "@babel/core": "^7.20.7",
     "@babel/eslint-parser": "^7.19.1",
+    "@typescript-eslint/parser": "^5.47.1",
     "eslint": "^8.30.0",
     "eslint-config-airbnb": "^18.2.1",
     "eslint-config-fivetalent": "^0.0.25",
@@ -21,7 +22,8 @@
     "eslint-plugin-prettier": "^3.4.0",
     "eslint-plugin-react": "^7.24.0",
     "eslint-plugin-react-hooks": "^4.2.0",
-    "prettier": "^2.8.1"
+    "prettier": "^2.8.1",
+    "typescript-eslint-parser": "^22.0.0"
   },
   "dependencies": {
     "eslint": "^8.30.0",

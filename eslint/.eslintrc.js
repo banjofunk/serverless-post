@@ -1,8 +1,12 @@
 module.exports = {
   extends: ['airbnb', 'prettier', 'react-app', 'plugin:import/errors', 'plugin:import/warnings'],
-  parser: '@babel/eslint-parser',
+  parser: '@typescript-eslint/parser',
   parserOptions: {
-    ecmaVersion: 2018,
+    ecmaFeatures: {
+      jsx: true,
+    },
+    ecmaVersion: 'latest',
+    sourceType: 'module',
   },
   settings: {
     'import/core-modules': [2, 'aws-sdk'],
@@ -13,7 +17,7 @@ module.exports = {
           ['src', '../web/src'],
           ['shared', '../web/src/components/shared'],
         ],
-        extensions: ['.js', '.jsx'],
+        extensions: ['.js', '.jsx', '.ts', '.tsx'],
       },
       node: {
         paths: ['web/', 'web/src/components'],
@@ -68,7 +72,7 @@ module.exports = {
     'react/jsx-filename-extension': [
       1,
       {
-        extensions: ['.js', '.jsx'],
+        extensions: ['.js', '.jsx', '.ts', 'tsx'],
       },
     ],
     radix: 0,
@@ -130,5 +134,5 @@ module.exports = {
     'jsx-a11y/media-has-caption': 0,
     'jsx-a11y/label-has-associated-control': 0,
   },
-  plugins: ['html', 'prettier', 'react-hooks'],
+  plugins: ['@typescript-eslint', 'html', 'prettier', 'react-hooks'],
 };
