@@ -1,0 +1,17 @@
+## [Start] Initialization default values. **
+$util.qr($ctx.args.put("input", $util.defaultIfNull($ctx.args.input, {})))
+$util.qr($ctx.stash.put("defaultValues", $util.defaultIfNull($ctx.stash.defaultValues, {})))
+#set( $createdAt = $util.time.nowISO8601() )
+#set( $id = $util.defaultIfNull($ctx.args.input.get("id"), $util.autoId()) )
+
+#set($authGroups = [])
+$util.qr($authGroups.add("$id:user"))
+$util.qr($ctx.args.input.put("authGroups", $authGroups))
+
+$util.qr($ctx.stash.defaultValues.put("id", $id))
+$util.qr($ctx.stash.defaultValues.put("createdAt", $createdAt))
+$util.toJson({
+  "version": "2018-05-29",
+  "payload": {}
+})
+## [End] Initialization default values. **

@@ -1,35 +1,47 @@
+type Mutation {
+  invokeLambda(postId: ID): AWSJSON
+    @function(name: "post-${env}-postService")
+    @aws_iam
+    @aws_cognito_user_pools
+}
+
 type User
   @model(subscriptions: { level: off })
   @auth(
     rules: [
       { allow: private, provider: iam }
-      { allow: owner, ownerField: "cognitoId" }
-      { allow: owner, ownerField: "amazonId" }
-      { allow: owner, ownerField: "googleId" }
       { allow: groups, groups: ["Admin"] }
+      { allow: groups, groupsField: "authGroups" }
     ]
   ) {
   id: ID!
-  cognitoId: ID
-  amazonId: ID
-  googleId: ID
+  authGroups: [String]
   createdAt: AWSDateTime
   updatedAt: AWSDateTime
   firstName: String
   lastName: String
   profileImageUrl: String
   email: String! @index(name: "byEmail", queryField: "listUserByEmail")
+  posts: [Post] @hasMany
 }
 
-type Post @model @auth(rules: [{ allow: public }]) {
+type Post
+  @model
+  @auth(
+    rules: [
+      { allow: private, provider: iam }
+      { allow: private, provider: userPools, operations: [read] }
+      { allow: groups, groups: ["Admin"] }
+      { allow: groups, groupsField: "authGroups" }
+    ]
+  ) {
   id: ID!
+  userPostsId: ID!
+  authGroups: [String]
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
+  lambdaInvokedAt: AWSDateTime
   title: String!
-  comments: [Comment] @hasMany
+  body: String
+  user: User @belongsTo
 }
-
-type Comment @model @auth(rules: [{ allow: public }]) {
-  id: ID!
-  post: Post @belongsTo
-  content: String!
-}
-   

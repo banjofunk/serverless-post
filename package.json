@@ -7,6 +7,7 @@
       "eslint",
       "cognito-triggers",
       "service-helpers",
+      "service-post",
       "layers"
     ],
     "nohoist": [

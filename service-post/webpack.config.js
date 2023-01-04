@@ -14,6 +14,7 @@ module.exports = {
   mode: slsw.lib.webpack.isLocal ? 'development' : 'production',
   optimization: {
     minimize: false,
+    concatenateModules: false,
   },
   performance: {
     hints: false,
@@ -35,7 +36,7 @@ module.exports = {
               '@babel/preset-env',
               {
                 targets: {
-                  node: '8.10',
+                  node: '12',
                 },
               },
             ],

@@ -1,0 +1,31 @@
+{
+  "name": "service-post",
+  "version": "1.0.0",
+  "private": true,
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@babel/cli": "^7.12.1",
+    "@babel/core": "^7.12.3",
+    "@babel/node": "^7.12.6",
+    "@babel/preset-env": "^7.12.1",
+    "@babel/runtime": "^7.12.5",
+    "babel-loader": "^8.1.0",
+    "serverless": "^2.57.0",
+    "serverless-webpack": "^5.5.4",
+    "webpack": "^5.1.0",
+    "webpack-node-externals": "^2.5.2"
+  },
+  "dependencies": {
+    "@sendgrid/mail": "^7.7.0",
+    "aws-sdk": "^2.835.0",
+    "date-fns": "^2.29.3",
+    "graphql-tag": "^2.11.0",
+    "node-fetch": "^2.6.1",
+    "serverless-step-functions": "^3.0.0",
+    "service-helpers": "*",
+    "uuid": "^8.3.2",
+    "ws": "^7.3.1"
+  }
+}

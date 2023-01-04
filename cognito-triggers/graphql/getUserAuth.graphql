@@ -2,10 +2,8 @@ query getUserAuth($email: String!) {
   listUserByEmail(email: $email) {
     items {
       id
+      createdAt
       email
-      cognitoId
-      amazonId
-      googleId
       firstName
       lastName
       profileImageUrl

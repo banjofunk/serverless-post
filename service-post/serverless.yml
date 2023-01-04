@@ -1,0 +1,55 @@
+service: service-post
+variablesResolutionMode: 20210326
+projectDir: ../
+package:
+  individually: true
+plugins:
+  - serverless-webpack
+  - serverless-step-functions
+provider:
+  name: aws
+  runtime: nodejs12.x
+  region: us-east-1
+  stage: ${opt:stage, 'dev'}
+  versionFunctions: false
+  environment:
+    stage: ${self:provider.stage}
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - states:StartExecution
+        - states:SendTaskSuccess
+        - states:SendTaskFailure
+        - states:DescribeExecution
+        - states:StartSyncExecution
+        - states:GetExecutionHistory
+        - s3:*
+        - appsync:GraphQL
+        - sns:Publish
+        - lambda:InvokeFunction
+        - ssm:GetParametersByPath
+        - dynamodb:Query
+      Resource: "*"
+custom:
+  webpack:
+    webpackConfig: ./webpack.config.js
+    packager: yarn
+    includeModules:
+      nodeModulesRelativeDir: ../
+      forceExclude:
+        - aws-sdk
+        - apollo-client
+        - apollo-link-http-common
+        - aws-appsync
+        - es6-promise
+        - graphql
+        - graphql-tag
+        - isomorphic-fetch
+        - uuid
+        - ws
+        - '@aws-crypto/client-node'
+functions:
+  postService:
+    handler: functions/postService.handler
+    layers:
+      - ${cf:layers-${self:provider.stage}.Appsync}

@@ -5,15 +5,26 @@ export const getUser = /* GraphQL */ `
   query GetUser($id: ID!) {
     getUser(id: $id) {
       id
-      cognitoId
-      amazonId
-      googleId
+      authGroups
       createdAt
       updatedAt
       firstName
       lastName
       profileImageUrl
       email
+      posts {
+        items {
+          id
+          userPostsId
+          authGroups
+          createdAt
+          updatedAt
+          lambdaInvokedAt
+          title
+          body
+        }
+        nextToken
+      }
     }
   }
 `;
@@ -26,15 +37,16 @@ export const listUsers = /* GraphQL */ `
     listUsers(filter: $filter, limit: $limit, nextToken: $nextToken) {
       items {
         id
-        cognitoId
-        amazonId
-        googleId
+        authGroups
         createdAt
         updatedAt
         firstName
         lastName
         profileImageUrl
         email
+        posts {
+          nextToken
+        }
       }
       nextToken
     }
@@ -57,15 +69,16 @@ export const listUserByEmail = /* GraphQL */ `
     ) {
       items {
         id
-        cognitoId
-        amazonId
-        googleId
+        authGroups
         createdAt
         updatedAt
         firstName
         lastName
         profileImageUrl
         email
+        posts {
+          nextToken
+        }
       }
       nextToken
     }
@@ -75,19 +88,26 @@ export const getPost = /* GraphQL */ `
   query GetPost($id: ID!) {
     getPost(id: $id) {
       id
-      title
-      comments {
-        items {
-          id
-          content
-          createdAt
-          updatedAt
-          postCommentsId
-        }
-        nextToken
-      }
+      userPostsId
+      authGroups
       createdAt
       updatedAt
+      lambdaInvokedAt
+      title
+      body
+      user {
+        id
+        authGroups
+        createdAt
+        updatedAt
+        firstName
+        lastName
+        profileImageUrl
+        email
+        posts {
+          nextToken
+        }
+      }
     }
   }
 `;
@@ -100,56 +120,23 @@ export const listPosts = /* GraphQL */ `
     listPosts(filter: $filter, limit: $limit, nextToken: $nextToken) {
       items {
         id
-        title
-        comments {
-          nextToken
-        }
+        userPostsId
+        authGroups
         createdAt
         updatedAt
-      }
-      nextToken
-    }
-  }
-`;
-export const getComment = /* GraphQL */ `
-  query GetComment($id: ID!) {
-    getComment(id: $id) {
-      id
-      post {
-        id
+        lambdaInvokedAt
         title
-        comments {
-          nextToken
-        }
-        createdAt
-        updatedAt
-      }
-      content
-      createdAt
-      updatedAt
-      postCommentsId
-    }
-  }
-`;
-export const listComments = /* GraphQL */ `
-  query ListComments(
-    $filter: ModelCommentFilterInput
-    $limit: Int
-    $nextToken: String
-  ) {
-    listComments(filter: $filter, limit: $limit, nextToken: $nextToken) {
-      items {
-        id
-        post {
+        body
+        user {
           id
-          title
+          authGroups
           createdAt
           updatedAt
+          firstName
+          lastName
+          profileImageUrl
+          email
         }
-        content
-        createdAt
-        updatedAt
-        postCommentsId
       }
       nextToken
     }

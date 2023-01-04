@@ -1,6 +1,11 @@
 /* eslint-disable */
 // this is an auto generated file. This will be overwritten
 
+export const invokeLambda = /* GraphQL */ `
+  mutation InvokeLambda($postId: ID) {
+    invokeLambda(postId: $postId)
+  }
+`;
 export const createUser = /* GraphQL */ `
   mutation CreateUser(
     $input: CreateUserInput!
@@ -8,15 +13,26 @@ export const createUser = /* GraphQL */ `
   ) {
     createUser(input: $input, condition: $condition) {
       id
-      cognitoId
-      amazonId
-      googleId
+      authGroups
       createdAt
       updatedAt
       firstName
       lastName
       profileImageUrl
       email
+      posts {
+        items {
+          id
+          userPostsId
+          authGroups
+          createdAt
+          updatedAt
+          lambdaInvokedAt
+          title
+          body
+        }
+        nextToken
+      }
     }
   }
 `;
@@ -27,15 +43,26 @@ export const updateUser = /* GraphQL */ `
   ) {
     updateUser(input: $input, condition: $condition) {
       id
-      cognitoId
-      amazonId
-      googleId
+      authGroups
       createdAt
       updatedAt
       firstName
       lastName
       profileImageUrl
       email
+      posts {
+        items {
+          id
+          userPostsId
+          authGroups
+          createdAt
+          updatedAt
+          lambdaInvokedAt
+          title
+          body
+        }
+        nextToken
+      }
     }
   }
 `;
@@ -46,15 +73,26 @@ export const deleteUser = /* GraphQL */ `
   ) {
     deleteUser(input: $input, condition: $condition) {
       id
-      cognitoId
-      amazonId
-      googleId
+      authGroups
       createdAt
       updatedAt
       firstName
       lastName
       profileImageUrl
       email
+      posts {
+        items {
+          id
+          userPostsId
+          authGroups
+          createdAt
+          updatedAt
+          lambdaInvokedAt
+          title
+          body
+        }
+        nextToken
+      }
     }
   }
 `;
@@ -65,19 +103,26 @@ export const createPost = /* GraphQL */ `
   ) {
     createPost(input: $input, condition: $condition) {
       id
-      title
-      comments {
-        items {
-          id
-          content
-          createdAt
-          updatedAt
-          postCommentsId
-        }
-        nextToken
-      }
+      userPostsId
+      authGroups
       createdAt
       updatedAt
+      lambdaInvokedAt
+      title
+      body
+      user {
+        id
+        authGroups
+        createdAt
+        updatedAt
+        firstName
+        lastName
+        profileImageUrl
+        email
+        posts {
+          nextToken
+        }
+      }
     }
   }
 `;
@@ -88,19 +133,26 @@ export const updatePost = /* GraphQL */ `
   ) {
     updatePost(input: $input, condition: $condition) {
       id
-      title
-      comments {
-        items {
-          id
-          content
-          createdAt
-          updatedAt
-          postCommentsId
-        }
-        nextToken
-      }
+      userPostsId
+      authGroups
       createdAt
       updatedAt
+      lambdaInvokedAt
+      title
+      body
+      user {
+        id
+        authGroups
+        createdAt
+        updatedAt
+        firstName
+        lastName
+        profileImageUrl
+        email
+        posts {
+          nextToken
+        }
+      }
     }
   }
 `;
@@ -111,88 +163,26 @@ export const deletePost = /* GraphQL */ `
   ) {
     deletePost(input: $input, condition: $condition) {
       id
+      userPostsId
+      authGroups
+      createdAt
+      updatedAt
+      lambdaInvokedAt
       title
-      comments {
-        items {
-          id
-          content
-          createdAt
-          updatedAt
-          postCommentsId
-        }
-        nextToken
-      }
-      createdAt
-      updatedAt
-    }
-  }
-`;
-export const createComment = /* GraphQL */ `
-  mutation CreateComment(
-    $input: CreateCommentInput!
-    $condition: ModelCommentConditionInput
-  ) {
-    createComment(input: $input, condition: $condition) {
-      id
-      post {
+      body
+      user {
         id
-        title
-        comments {
-          nextToken
-        }
+        authGroups
         createdAt
         updatedAt
-      }
-      content
-      createdAt
-      updatedAt
-      postCommentsId
-    }
-  }
-`;
-export const updateComment = /* GraphQL */ `
-  mutation UpdateComment(
-    $input: UpdateCommentInput!
-    $condition: ModelCommentConditionInput
-  ) {
-    updateComment(input: $input, condition: $condition) {
-      id
-      post {
-        id
-        title
-        comments {
+        firstName
+        lastName
+        profileImageUrl
+        email
+        posts {
           nextToken
         }
-        createdAt
-        updatedAt
       }
-      content
-      createdAt
-      updatedAt
-      postCommentsId
-    }
-  }
-`;
-export const deleteComment = /* GraphQL */ `
-  mutation DeleteComment(
-    $input: DeleteCommentInput!
-    $condition: ModelCommentConditionInput
-  ) {
-    deleteComment(input: $input, condition: $condition) {
-      id
-      post {
-        id
-        title
-        comments {
-          nextToken
-        }
-        createdAt
-        updatedAt
-      }
-      content
-      createdAt
-      updatedAt
-      postCommentsId
     }
   }
 `;
