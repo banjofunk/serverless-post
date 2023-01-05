@@ -1,6 +1,6 @@
 type Mutation {
-  invokeLambda(postId: ID): AWSJSON
-    @function(name: "post-${env}-postService")
+  invokeLambda(postId: ID): Post
+    @function(name: "service-post-${env}-postService")
     @aws_iam
     @aws_cognito_user_pools
 }
@@ -41,7 +41,6 @@ type Post
   createdAt: AWSDateTime
   updatedAt: AWSDateTime
   lambdaInvokedAt: AWSDateTime
-  title: String!
-  body: String
+  body: String!
   user: User @belongsTo
 }

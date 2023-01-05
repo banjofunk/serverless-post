@@ -1,0 +1,11 @@
+mutation UpdatePost($input: UpdatePostInput!) {
+  updatePost(input: $input) {
+    id
+    userPostsId
+    authGroups
+    createdAt
+    updatedAt
+    lambdaInvokedAt
+    body
+  }
+}

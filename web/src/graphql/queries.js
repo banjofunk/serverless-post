@@ -20,7 +20,6 @@ export const getUser = /* GraphQL */ `
           createdAt
           updatedAt
           lambdaInvokedAt
-          title
           body
         }
         nextToken
@@ -93,7 +92,6 @@ export const getPost = /* GraphQL */ `
       createdAt
       updatedAt
       lambdaInvokedAt
-      title
       body
       user {
         id
@@ -125,7 +123,6 @@ export const listPosts = /* GraphQL */ `
         createdAt
         updatedAt
         lambdaInvokedAt
-        title
         body
         user {
           id

@@ -14,6 +14,8 @@ provider:
   versionFunctions: false
   environment:
     stage: ${self:provider.stage}
+    region: ${self:provider.region}
+    graphqlEndpoint: https://3nfot4lb5ffifmmci754xdoj6y.appsync-api.us-east-1.amazonaws.com/graphql
   iamRoleStatements:
     - Effect: "Allow"
       Action:

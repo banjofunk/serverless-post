@@ -10,7 +10,6 @@ export const onCreatePost = /* GraphQL */ `
       createdAt
       updatedAt
       lambdaInvokedAt
-      title
       body
       user {
         id
@@ -37,7 +36,6 @@ export const onUpdatePost = /* GraphQL */ `
       createdAt
       updatedAt
       lambdaInvokedAt
-      title
       body
       user {
         id
@@ -64,7 +62,6 @@ export const onDeletePost = /* GraphQL */ `
       createdAt
       updatedAt
       lambdaInvokedAt
-      title
       body
       user {
         id

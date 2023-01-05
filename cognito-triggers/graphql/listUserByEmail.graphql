@@ -1,4 +1,4 @@
-query getUserAuth($email: String!) {
+query listUserByEmail($email: String!) {
   listUserByEmail(email: $email) {
     items {
       id

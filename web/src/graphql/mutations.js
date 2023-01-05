@@ -3,7 +3,28 @@
 
 export const invokeLambda = /* GraphQL */ `
   mutation InvokeLambda($postId: ID) {
-    invokeLambda(postId: $postId)
+    invokeLambda(postId: $postId) {
+      id
+      userPostsId
+      authGroups
+      createdAt
+      updatedAt
+      lambdaInvokedAt
+      body
+      user {
+        id
+        authGroups
+        createdAt
+        updatedAt
+        firstName
+        lastName
+        profileImageUrl
+        email
+        posts {
+          nextToken
+        }
+      }
+    }
   }
 `;
 export const createUser = /* GraphQL */ `
@@ -28,7 +49,6 @@ export const createUser = /* GraphQL */ `
           createdAt
           updatedAt
           lambdaInvokedAt
-          title
           body
         }
         nextToken
@@ -58,7 +78,6 @@ export const updateUser = /* GraphQL */ `
           createdAt
           updatedAt
           lambdaInvokedAt
-          title
           body
         }
         nextToken
@@ -88,7 +107,6 @@ export const deleteUser = /* GraphQL */ `
           createdAt
           updatedAt
           lambdaInvokedAt
-          title
           body
         }
         nextToken
@@ -108,7 +126,6 @@ export const createPost = /* GraphQL */ `
       createdAt
       updatedAt
       lambdaInvokedAt
-      title
       body
       user {
         id
@@ -138,7 +155,6 @@ export const updatePost = /* GraphQL */ `
       createdAt
       updatedAt
       lambdaInvokedAt
-      title
       body
       user {
         id
@@ -168,7 +184,6 @@ export const deletePost = /* GraphQL */ `
       createdAt
       updatedAt
       lambdaInvokedAt
-      title
       body
       user {
         id

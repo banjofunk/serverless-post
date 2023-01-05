@@ -59,13 +59,6 @@ custom:
         - ws
         - '@aws-crypto/client-node'
 functions:
-  postConfirmation:
-    handler: functions/postConfirmation.handler
-    events:
-      - cognitoUserPool:
-          pool: ${self:custom.userPoolName}
-          trigger: PostConfirmation
-          existing: true
   preTokenGeneration:
     handler: functions/preTokenGeneration.handler
     layers:
@@ -75,33 +68,12 @@ functions:
           pool: ${self:custom.userPoolName}
           trigger: PreTokenGeneration
           existing: true
-  preSignUp:
-    handler: functions/preSignUp.handler
-    events:
-      - cognitoUserPool:
-          pool: ${self:custom.userPoolName}
-          trigger: PreSignUp
-          existing: true
 resources:
   Resources:
-    CognitoPostConfirmationLambdaPermission:
-      Type: AWS::Lambda::Permission
-      Properties:
-        Action: lambda:InvokeFunction
-        FunctionName: !GetAtt PostConfirmationLambdaFunction.Arn
-        Principal: cognito-idp.amazonaws.com
-        SourceArn: ${self:custom.userPoolArn}
     CognitoPreTokenGenerationLambdaPermission:
       Type: AWS::Lambda::Permission
       Properties:
         Action: lambda:InvokeFunction
         FunctionName: !GetAtt PreTokenGenerationLambdaFunction.Arn
-        Principal: cognito-idp.amazonaws.com
-        SourceArn: ${self:custom.userPoolArn}
-    CognitoPreSignUpLambdaPermission:
-      Type: AWS::Lambda::Permission
-      Properties:
-        Action: lambda:InvokeFunction
-        FunctionName: !GetAtt PreSignUpLambdaFunction.Arn
         Principal: cognito-idp.amazonaws.com
         SourceArn: ${self:custom.userPoolArn}

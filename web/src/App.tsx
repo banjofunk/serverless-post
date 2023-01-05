@@ -1,7 +1,7 @@
 import type { Component } from 'solid-js';
 import { createSignal, createEffect, onCleanup } from 'solid-js';
 import { Amplify, Auth, Hub, API } from 'aws-amplify';
-import { SignIn } from './components';
+import { SignIn, Main } from './components';
 import { getUser } from './graphql/queries';
 import { User } from './models';
 import awsExports from './aws-exports';
@@ -94,17 +94,10 @@ const App: Component = () => {
     });
   });
 
-  createEffect(() => {
-    const usr = user();
-
-    if (usr) console.log('user', usr);
-  });
-
   return (
-    <div>
-      <header className="w-full min-h-screen flex flex-col justify-center items-center bg-gray-800">
-        <SignIn user={user} loading={loading} setLoading={setLoading} />
-      </header>
+    <div className="w-full min-h-screen flex flex-col items-center bg-gray-800">
+      <SignIn user={user} loading={loading} setLoading={setLoading} />
+      <Main user={user} loading={loading} setLoading={setLoading} />
     </div>
   );
 };

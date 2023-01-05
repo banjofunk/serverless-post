@@ -1,5 +1,5 @@
 import { appsyncClient } from 'service-helpers/appsyncClient';
-import getUserAuth from '../graphql/getUserAuth.graphql';
+import listUserByEmail from '../graphql/listUserByEmail.graphql';
 import createUser from '../graphql/createUser.graphql';
 
 exports.handler = async (event) => {
@@ -34,7 +34,7 @@ exports.handler = async (event) => {
 
   // find or create user and update providerId if needed
   const user = await client
-    .query({ query: getUserAuth, fetchPolicy: 'network-only', variables: { email } })
+    .query({ query: listUserByEmail, fetchPolicy: 'network-only', variables: { email } })
     .then(({ data: { listUserByEmail: { items: [resp] = [] } } = {} }) => resp || false)
     .then(skipOrCreateUser);
 

@@ -1,38 +1,54 @@
 {
   "service": {
-    "service": "service-post",
+    "service": "cognito-triggers",
     "serviceObject": {
-      "name": "service-post"
+      "name": "cognito-triggers"
     },
     "provider": {
       "name": "aws",
       "runtime": "nodejs12.x",
       "region": "us-east-1",
       "stage": "dev",
+      "deploymentPrefix": "cognito-triggers",
       "versionFunctions": false,
-      "environment": {
-        "stage": "dev"
-      },
       "iamRoleStatements": [
         {
           "Effect": "Allow",
           "Action": [
-            "states:StartExecution",
-            "states:SendTaskSuccess",
-            "states:SendTaskFailure",
-            "states:DescribeExecution",
-            "states:StartSyncExecution",
-            "states:GetExecutionHistory",
-            "s3:*",
-            "appsync:GraphQL",
-            "sns:Publish",
-            "lambda:InvokeFunction",
-            "ssm:GetParametersByPath",
-            "dynamodb:Query"
+            "*"
+          ],
+          "Resource": "*"
+        },
+        {
+          "Effect": "Allow",
+          "Action": [
+            "cognito-idp:GetGroup",
+            "cognito-idp:CreateGroup",
+            "cognito-idp:AdminAddUserToGroup"
+          ],
+          "Resource": "arn:aws:cognito-idp:us-east-1:285012317380:userpool/*"
+        },
+        {
+          "Effect": "Allow",
+          "Action": [
+            "dynamodb:Query",
+            "dynamodb:PutItem"
+          ],
+          "Resource": "arn:aws:dynamodb:us-east-1:285012317380:table/*"
+        },
+        {
+          "Effect": "Allow",
+          "Action": [
+            "lambda:InvokeFunction"
           ],
           "Resource": "*"
         }
       ],
+      "environment": {
+        "stage": "dev",
+        "region": "us-east-1",
+        "graphqlEndpoint": "https://3nfot4lb5ffifmmci754xdoj6y.appsync-api.us-east-1.amazonaws.com/graphql"
+      },
       "compiledCloudFormationTemplate": {
         "AWSTemplateFormatVersion": "2010-09-09",
         "Description": "The AWS CloudFormation template for this Serverless application",
@@ -106,10 +122,10 @@
               }
             }
           },
-          "PostServiceLogGroup": {
+          "PreTokenGenerationLogGroup": {
             "Type": "AWS::Logs::LogGroup",
             "Properties": {
-              "LogGroupName": "/aws/lambda/service-post-dev-postService"
+              "LogGroupName": "/aws/lambda/cognito-triggers-dev-preTokenGeneration"
             }
           },
           "IamRoleLambdaExecution": {
@@ -137,7 +153,7 @@
                     "Fn::Join": [
                       "-",
                       [
-                        "service-post",
+                        "cognito-triggers",
                         "dev",
                         "lambda"
                       ]
@@ -154,7 +170,7 @@
                         ],
                         "Resource": [
                           {
-                            "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/service-post-dev*:*"
+                            "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/cognito-triggers-dev*:*"
                           }
                         ]
                       },
@@ -165,12 +181,21 @@
                         ],
                         "Resource": [
                           {
-                            "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/service-post-dev*:*:*"
+                            "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/cognito-triggers-dev*:*:*"
                           }
                         ]
                       },
                       {
                         "$ref": "$[\"service\"][\"provider\"][\"iamRoleStatements\"][0]"
+                      },
+                      {
+                        "$ref": "$[\"service\"][\"provider\"][\"iamRoleStatements\"][1]"
+                      },
+                      {
+                        "$ref": "$[\"service\"][\"provider\"][\"iamRoleStatements\"][2]"
+                      },
+                      {
+                        "$ref": "$[\"service\"][\"provider\"][\"iamRoleStatements\"][3]"
                       }
                     ]
                   }
@@ -181,7 +206,7 @@
                 "Fn::Join": [
                   "-",
                   [
-                    "service-post",
+                    "cognito-triggers",
                     "dev",
                     {
                       "Ref": "AWS::Region"
@@ -192,23 +217,25 @@
               }
             }
           },
-          "PostServiceLambdaFunction": {
+          "PreTokenGenerationLambdaFunction": {
             "Type": "AWS::Lambda::Function",
             "Properties": {
               "Code": {
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/service-post/dev/1672769317461-2023-01-03T18:08:37.461Z/postService.zip"
+                "S3Key": "cognito-triggers/cognito-triggers/dev/1672875696846-2023-01-04T23:41:36.846Z/preTokenGeneration.zip"
               },
-              "Handler": "functions/postService.handler",
+              "Handler": "functions/preTokenGeneration.handler",
               "Runtime": "nodejs12.x",
-              "FunctionName": "service-post-dev-postService",
+              "FunctionName": "cognito-triggers-dev-preTokenGeneration",
               "MemorySize": 1024,
               "Timeout": 6,
               "Environment": {
                 "Variables": {
-                  "stage": "dev"
+                  "stage": "dev",
+                  "region": "us-east-1",
+                  "graphqlEndpoint": "https://3nfot4lb5ffifmmci754xdoj6y.appsync-api.us-east-1.amazonaws.com/graphql"
                 }
               },
               "Role": {
@@ -222,8 +249,138 @@
               ]
             },
             "DependsOn": [
-              "PostServiceLogGroup"
+              "PreTokenGenerationLogGroup"
             ]
+          },
+          "PreTokenGenerationCustomCognitoUserPool1": {
+            "Type": "Custom::CognitoUserPool",
+            "Version": 1,
+            "DependsOn": [
+              "PreTokenGenerationLambdaFunction",
+              "CustomDashresourceDashexistingDashcupLambdaFunction"
+            ],
+            "Properties": {
+              "ServiceToken": {
+                "Fn::GetAtt": [
+                  "CustomDashresourceDashexistingDashcupLambdaFunction",
+                  "Arn"
+                ]
+              },
+              "FunctionName": "cognito-triggers-dev-preTokenGeneration",
+              "UserPoolName": "webc61eee58_userpool_c61eee58-dev",
+              "UserPoolConfigs": [
+                {
+                  "Trigger": "PreTokenGeneration"
+                }
+              ]
+            }
+          },
+          "IamRoleCustomResourcesLambdaExecution": {
+            "Type": "AWS::IAM::Role",
+            "Properties": {
+              "AssumeRolePolicyDocument": {
+                "Version": "2012-10-17",
+                "Statement": [
+                  {
+                    "Effect": "Allow",
+                    "Principal": {
+                      "Service": [
+                        "lambda.amazonaws.com"
+                      ]
+                    },
+                    "Action": [
+                      "sts:AssumeRole"
+                    ]
+                  }
+                ]
+              },
+              "Policies": [
+                {
+                  "PolicyName": {
+                    "Fn::Join": [
+                      "-",
+                      [
+                        "dev",
+                        "cognito-triggers",
+                        "custom-resources-lambda"
+                      ]
+                    ]
+                  },
+                  "PolicyDocument": {
+                    "Version": "2012-10-17",
+                    "Statement": [
+                      {
+                        "Effect": "Allow",
+                        "Resource": "*",
+                        "Action": [
+                          "cognito-idp:ListUserPools",
+                          "cognito-idp:DescribeUserPool",
+                          "cognito-idp:UpdateUserPool"
+                        ]
+                      },
+                      {
+                        "Effect": "Allow",
+                        "Resource": {
+                          "Fn::Sub": "arn:${AWS::Partition}:lambda:*:*:function:cognito-triggers-dev-preTokenGeneration"
+                        },
+                        "Action": [
+                          "lambda:AddPermission",
+                          "lambda:RemovePermission"
+                        ]
+                      },
+                      {
+                        "Effect": "Allow",
+                        "Resource": {
+                          "Fn::Sub": "arn:${AWS::Partition}:iam::*:role/*"
+                        },
+                        "Action": [
+                          "iam:PassRole"
+                        ]
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          },
+          "CustomDashresourceDashexistingDashcupLambdaFunction": {
+            "Type": "AWS::Lambda::Function",
+            "Properties": {
+              "Code": {
+                "S3Bucket": {
+                  "Ref": "ServerlessDeploymentBucket"
+                },
+                "S3Key": "cognito-triggers/cognito-triggers/dev/1672875696846-2023-01-04T23:41:36.846Z/custom-resources.zip"
+              },
+              "FunctionName": "cognito-triggers-dev-custom-resource-existing-cup",
+              "Handler": "cognitoUserPool/handler.handler",
+              "MemorySize": 1024,
+              "Runtime": "nodejs12.x",
+              "Timeout": 180,
+              "Role": {
+                "Fn::GetAtt": [
+                  "IamRoleCustomResourcesLambdaExecution",
+                  "Arn"
+                ]
+              }
+            },
+            "DependsOn": [
+              "IamRoleCustomResourcesLambdaExecution"
+            ]
+          },
+          "CognitoPreTokenGenerationLambdaPermission": {
+            "Type": "AWS::Lambda::Permission",
+            "Properties": {
+              "Action": "lambda:InvokeFunction",
+              "FunctionName": {
+                "Fn::GetAtt": [
+                  "PreTokenGenerationLambdaFunction",
+                  "Arn"
+                ]
+              },
+              "Principal": "cognito-idp.amazonaws.com",
+              "SourceArn": "arn:aws:cognito-idp:us-east-1:285012317380:userpool/us-east-1_U60pC7lYD"
+            }
           }
         },
         "Outputs": {
@@ -232,7 +389,7 @@
               "Ref": "ServerlessDeploymentBucket"
             },
             "Export": {
-              "Name": "sls-service-post-dev-ServerlessDeploymentBucketName"
+              "Name": "sls-cognito-triggers-dev-ServerlessDeploymentBucketName"
             }
           }
         }
@@ -322,6 +479,8 @@
       "vpc": {}
     },
     "custom": {
+      "userPoolName": "webc61eee58_userpool_c61eee58-dev",
+      "userPoolArn": "arn:aws:cognito-idp:us-east-1:285012317380:userpool/us-east-1_U60pC7lYD",
       "webpack": {
         "webpackConfig": "./webpack.config.js",
         "packager": "yarn",
@@ -344,26 +503,52 @@
       }
     },
     "plugins": [
-      "serverless-webpack",
-      "serverless-step-functions"
+      "serverless-webpack"
     ],
     "pluginsData": {},
     "functions": {
-      "postService": {
-        "handler": "functions/postService.handler",
+      "preTokenGeneration": {
+        "handler": "functions/preTokenGeneration.handler",
         "layers": {
-          "$ref": "$[\"service\"][\"provider\"][\"compiledCloudFormationTemplate\"][\"Resources\"][\"PostServiceLambdaFunction\"][\"Properties\"][\"Layers\"]"
+          "$ref": "$[\"service\"][\"provider\"][\"compiledCloudFormationTemplate\"][\"Resources\"][\"PreTokenGenerationLambdaFunction\"][\"Properties\"][\"Layers\"]"
         },
-        "events": [],
-        "name": "service-post-dev-postService",
+        "events": [
+          {
+            "cognitoUserPool": {
+              "pool": "webc61eee58_userpool_c61eee58-dev",
+              "trigger": "PreTokenGeneration",
+              "existing": true
+            }
+          }
+        ],
+        "name": "cognito-triggers-dev-preTokenGeneration",
         "package": {
-          "artifact": ".serverless/postService.zip"
+          "artifact": ".serverless/preTokenGeneration.zip"
         },
         "memory": 1024,
         "timeout": 6,
         "runtime": "nodejs12.x",
         "vpc": {}
       }
+    },
+    "resources": {
+      "Resources": {
+        "CognitoPreTokenGenerationLambdaPermission": {
+          "Type": "AWS::Lambda::Permission",
+          "Properties": {
+            "Action": "lambda:InvokeFunction",
+            "FunctionName": {
+              "Fn::GetAtt": [
+                "PreTokenGenerationLambdaFunction",
+                "Arn"
+              ]
+            },
+            "Principal": "cognito-idp.amazonaws.com",
+            "SourceArn": "arn:aws:cognito-idp:us-east-1:285012317380:userpool/us-east-1_U60pC7lYD"
+          }
+        }
+      },
+      "Outputs": {}
     },
     "configValidationMode": "warn",
     "serviceFilename": "serverless.yml",
@@ -375,7 +560,7 @@
       "projectDir": "../",
       "package": {
         "individually": true,
-        "artifactDirectoryName": "serverless/service-post/dev/1672769317461-2023-01-03T18:08:37.461Z"
+        "artifactDirectoryName": "cognito-triggers/cognito-triggers/dev/1672875696846-2023-01-04T23:41:36.846Z"
       },
       "plugins": {
         "$ref": "$[\"service\"][\"plugins\"]"
@@ -388,20 +573,17 @@
       },
       "functions": {
         "$ref": "$[\"service\"][\"functions\"]"
+      },
+      "resources": {
+        "$ref": "$[\"service\"][\"resources\"]"
       }
     },
     "layers": {},
-    "isDashboardMonitoringPreconfigured": false,
-    "stepFunctions": {
-      "validate": false,
-      "noOutput": false,
-      "stateMachines": {},
-      "activities": []
-    }
+    "isDashboardMonitoringPreconfigured": false
   },
   "package": {
     "individually": true,
-    "artifactDirectoryName": "serverless/service-post/dev/1672769317461-2023-01-03T18:08:37.461Z",
+    "artifactDirectoryName": "cognito-triggers/cognito-triggers/dev/1672875696846-2023-01-04T23:41:36.846Z",
     "artifact": ""
   }
 }
